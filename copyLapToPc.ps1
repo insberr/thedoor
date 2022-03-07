@@ -1,0 +1,1 @@
+copy C:\Users\jonah\code\thedoor\config.json \\JONAH-I3\dev\thedoor

@@ -1,0 +1,21 @@
+{
+    "counting": {
+        "count": 0,
+        "fails": 0,
+        "maxFails": 0,
+        "failsResetTime": 1000,
+        "goal": 10000000,
+        "lastCountMemeber": ""
+    },
+    "stats": {
+        "timesSaid": {
+            "pee": 0,
+            "piss": 0
+        }
+    },
+    "chance": {
+        "jillLittle": 0.5,
+        "jjLittle": 0.5,
+        "theBestie": 0.5
+    }
+}

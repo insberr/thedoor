@@ -1,7 +1,10 @@
 const { Client, Intents } = require("discord.js");
 
 module.exports = {
-    bot(config) {
+    name: "JJ's Little Friend",
+    codename: "jjLittle",
+    ignore: true,
+    run(mgr) {
         const client = new Client({
             intents: [
                 Intents.FLAGS.GUILDS,
@@ -10,13 +13,13 @@ module.exports = {
         });
 
         client.once("ready", () => {
-            console.log("Thea Bestie Ready!");
+            console.log(this.name + " Ready!");
         });
 
         client.addListener("messageCreate", (message) => {
-            console.log("Thea: " + message.content);
+            console.log(message.content);
         });
 
-        client.login(config.tokens.theaBestie);
+        client.login(mgr.config.tokens[this.codename]);
     }
 }
