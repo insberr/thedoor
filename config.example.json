@@ -1,5 +1,8 @@
 {
     "tokens": {
         "theDoor": ""
+    },
+    "clientIds": {
+        "theDoor": ""
     }
 }
