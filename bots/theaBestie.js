@@ -29,9 +29,27 @@ module.exports = {
         client.addListener("messageCreate", (message) => {
             if (message.author.bot) return;
 
-
-            if (number < mgr.config.chance[this.codename] / 100) {
+            let number = Math.random();
+            if (number < mgr.db.chance[this.codename] / 100) {
                 message.reply("https://tenor.com/view/dance-kid-club-gif-9152583");
+            }
+        });
+
+        client.on('interactionCreate', async interaction => {
+            if (!interaction.isCommand()) return;
+        
+            const { commandName } = interaction;
+        
+            if (commandName === 'chance') {
+                if (interaction.options.getNumber('edit')) {
+                    mgr.db.chance[this.codename] = interaction.options.getNumber('edit');
+                    mgr.save();
+                    interaction.reply('Chance set to **' + interaction.options.getNumber('edit') + '%**');
+                    return;
+                }
+
+                interaction.reply('Chance is: **' + mgr.db.chance[this.codename] + '%**');
+                return;
             }
         });
 

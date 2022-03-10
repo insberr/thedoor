@@ -14,6 +14,9 @@ um. do slash commands soon
 - quotes
 
 ### Little friends
+Make theses adjust chance based on how active the chat is ???  
+Make command to configure if you want to be pinged by the random replies. for all users, default its off
+
 - Thea’s Bestie: bot for the gif
 - Sabin: Randomly says variations of sabiens name and also picks up variations said in chat and changes his nickname to it (variations can also be manually added) ~~bot for L~~
 - JJ’s Little Friend: random L and piss

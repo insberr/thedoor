@@ -42,8 +42,26 @@ module.exports = {
             }
 
             let number = Math.random();
-            if (number < mgr.config.chance[this.codename] / 100) {
+            if (number < mgr.db.chance[this.codename] / 100) {
                 message.reply("L");
+                return;
+            }
+        });
+
+        client.on('interactionCreate', async interaction => {
+            if (!interaction.isCommand()) return;
+        
+            const { commandName } = interaction;
+        
+            if (commandName === 'chance') {
+                if (interaction.options.getNumber('edit')) {
+                    mgr.db.chance[this.codename] = interaction.options.getNumber('edit');
+                    mgr.save();
+                    interaction.reply('Chance set to **' + interaction.options.getNumber('edit') + '%**');
+                    return;
+                }
+
+                interaction.reply('Chance is: **' + mgr.db.chance[this.codename] + '%**');
                 return;
             }
         });
