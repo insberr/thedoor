@@ -1,5 +1,6 @@
 const { Client, Intents } = require("discord.js");
 const { SlashCommandBuilder} = require('@discordjs/builders');
+const mathjs = require('mathjs');
 
 module.exports = {
     name: "The Door",
@@ -43,6 +44,51 @@ module.exports = {
         client.login(mgr.config.tokens[this.codename]);
     },
     counting(mgr, message) {
-        return;
+        if (message.channel.id !== mgr.db.counting.channel) return;
+
+        if (message.author.id === mgr.db.counting.lastCountMember) {
+            message.react("❌");
+            message.reply("Not your turn dumbass <3");
+            return;
+        }
+
+        let userInputNumber;
+        try {
+            userInputNumber = mathjs.evaluate(message.content);
+        } catch (e) {
+            console.log("Math error:\n" + e);
+            return;
+        };
+
+        if (userInputNumber !== mgr.db.counting.count + 1) {
+            message.react("❌");
+
+            mgr.db.counting.fails++;
+            if (((new Date(mgr.db.counting.lastFailTime).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) >= 1) {
+                mgr.db.counting.fails = 1;
+            }
+
+            mgr.db.counting.lastFailTime = new Date();
+
+            if (mgr.db.counting.fails > mgr.db.counting.maxFails) {
+                mgr.db.counting.fails = 0;
+                mgr.db.counting.count = 0;
+                mgr.save();
+
+                message.reply("You failed too many times. Resetting the counter.");
+                return;
+            }
+
+            mgr.save();
+
+            message.reply(`Wrong number dumbass <3\n${mgr.db.counting.fails}/${mgr.db.counting.maxFails} left.`);
+            return;
+        } else {
+            // ADD NUMBER DUH
+            mgr.db.counting.count++;
+            mgr.db.counting.lastCountMember = message.author.id;
+            mgr.save();
+            message.react("✅");
+        }
     }
 }
