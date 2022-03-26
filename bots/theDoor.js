@@ -46,19 +46,19 @@ module.exports = {
     counting(mgr, message) {
         if (message.channel.id !== mgr.db.counting.channel) return;
 
+        let userInputNumber;
+        try {
+            userInputNumber = mathjs.evaluate(message.content);
+        } catch (e) {
+            // console.log("Math error:\n" + e);
+            return;
+        };
+
         if (message.author.id === mgr.db.counting.lastCountMember) {
             message.react("❌");
             message.reply("Not your turn dumbass <3");
             return;
         }
-
-        let userInputNumber;
-        try {
-            userInputNumber = mathjs.evaluate(message.content);
-        } catch (e) {
-            console.log("Math error:\n" + e);
-            return;
-        };
 
         if (userInputNumber !== mgr.db.counting.count + 1) {
             message.react("❌");
