@@ -20,6 +20,7 @@ module.exports = {
 
         client.addListener("messageCreate", (message) => {
             if (message.author.bot) return;
+            this.counting(mgr, message);
             // console.log(message.content);
         });
 
@@ -40,5 +41,8 @@ module.exports = {
         })
 
         client.login(mgr.config.tokens[this.codename]);
+    },
+    counting(mgr, message) {
+        return;
     }
 }
