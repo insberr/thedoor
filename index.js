@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const fileManager = require('./fileManager.js');
 const fs = require('fs');
 // const config = require("./config.json");
