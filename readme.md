@@ -8,10 +8,13 @@ um. do slash commands soon
 - malicious link (like fake nitro scams) removal ???
 - raid protection (this is a hard one) ??
     - use ksoft or whatever
-- better count to a million ??
+- better count to a million
+    - make him say wrong number dumbass <3 again
 - self roles ??
 - starboard
 - quotes
+- translate messages (maybe ???)
+- Memeber join and leave messages (and jj gif on member join)
 
 ### Little friends
 Make theses adjust chance based on how active the chat is ???  
@@ -24,3 +27,5 @@ Make command to configure if you want to be pinged by the random replies. for al
 - Joey: figure it out
 - Riah: roast people who talk about going to bed
 - random woo and w
+
+The Door makes a commonly said words list thatd be cool

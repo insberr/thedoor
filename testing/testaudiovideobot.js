@@ -43,4 +43,4 @@ client.addListener("messageCreate", async (message) => {
     }
 });
 
-client.login(require("./config.json").tokens.theDoor);
+client.login(require("../config.json").tokens.theDoor);
