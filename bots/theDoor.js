@@ -64,11 +64,12 @@ module.exports = {
             message.react("❌");
 
             mgr.db.counting.fails++;
-            if (((new Date(mgr.db.counting.lastFailTime).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) >= 1) {
+            if (((new Date().getTime() - new Date(mgr.db.counting.lastFailTime).getTime()) / (1000 * 60 * 60 * 24)) >= 1) {
                 mgr.db.counting.fails = 1;
             }
 
             mgr.db.counting.lastFailTime = new Date();
+            mgr.save();
 
             if (mgr.db.counting.fails > mgr.db.counting.maxFails) {
                 mgr.db.counting.fails = 0;
