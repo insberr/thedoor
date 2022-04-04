@@ -21,6 +21,7 @@ module.exports = {
 
         client.addListener("messageCreate", (message) => {
             if (message.author.bot) return;
+            
             this.counting(mgr, message);
             // console.log(message.content);
         });
@@ -45,6 +46,9 @@ module.exports = {
     },
     counting(mgr, message) {
         if (message.channel.id !== mgr.db.counting.channel) return;
+        if (message.type !== "DEFAULT") return;
+
+        if (message.content.split('').length === 1 && message.content.match(/[a-z]/ig).length === 1) return;
 
         let userInputNumber;
         try {
