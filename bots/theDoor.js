@@ -6,6 +6,20 @@ module.exports = {
     name: "The Door",
     codename: "theDoor",
     ignore: false,
+    commands: [
+        new SlashCommandBuilder()
+        .setName('countingStatus')
+        .setDescription('Shows the current counting status'),
+        new SlashCommandBuilder()
+        .setName('countingEdit')
+        .setDescription('Edits the counting stuffs')
+        .addSubcommand(subcommand => subcommand
+            .addIntegerOption(option => option.setName('count').setDescription('Change the count').setMinValue(0).setMaxValue(1000000000000))
+            .addIntegerOption(option => option.setName('fails').setDescription('Change the amount of fails').setMinValue(0).setMaxValue(100))
+            .addIntegerOption(option => option.setName('maxFails').setDescription('Change the amount of max fails').setMinValue(1).setMaxValue(100))
+            .addChannelOption(option => option.setName('channel').setDescription('Change the channel for the Counting'))
+        ),
+    ],
     run(mgr) {
         const client = new Client({
             intents: [
@@ -21,7 +35,7 @@ module.exports = {
 
         client.addListener("messageCreate", (message) => {
             if (message.author.bot) return;
-            
+
             this.counting(mgr, message);
             // console.log(message.content);
         });
