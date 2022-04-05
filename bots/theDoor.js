@@ -14,10 +14,11 @@ module.exports = {
         .setName('countingEdit')
         .setDescription('Edits the counting stuffs')
         .addSubcommand(subcommand => subcommand
-            .addIntegerOption(option => option.setName('count').setDescription('Change the count').setMinValue(0).setMaxValue(1000000000000))
-            .addIntegerOption(option => option.setName('fails').setDescription('Change the amount of fails').setMinValue(0).setMaxValue(100))
-            .addIntegerOption(option => option.setName('maxFails').setDescription('Change the amount of max fails').setMinValue(1).setMaxValue(100))
-            .addChannelOption(option => option.setName('channel').setDescription('Change the channel for the Counting'))
+            .addIntegerOption(option => option.setName('count').setDescription('Change the count').required(true).setMinValue(0).setMaxValue(1000000000000))
+            .addIntegerOption(option => option.setName('fails').setDescription('Change the amount of fails').required(true).setMinValue(0).setMaxValue(100))
+            .addIntegerOption(option => option.setName('maxFails').setDescription('Change the amount of max fails').required(true).setMinValue(1).setMaxValue(100))
+            .addIntegerOption(option => option.setName('goal').setDescription('Change the counting goal').required(true).setMinValue(1).setMaxValue(1000000000000))
+            .addChannelOption(option => option.setName('channel').setDescription('Change the channel for the Counting').required(true))
         ),
     ],
     run(mgr) {
@@ -39,6 +40,58 @@ module.exports = {
             this.counting(mgr, message);
             // console.log(message.content);
         });
+
+        client.on('interactionCreate', async interaction => {
+            if (!interaction.isCommand()) return;
+
+            const { commandName } = interaction;
+            
+            if (commandName === 'countingStatus') {
+                interaction.reply(`Current number: **${mgr.db.counting.count}**\nCounting goal: **${mgr.db.counting.goal}**\nFails: **${mgr.db.counting.fails}**\nMax Fails: **${mgr.db.counting.maxFails}**`);
+                return;
+            }
+
+            if (commandName === 'countingEdit') {
+                if (interaction.options.getInteger('count')) {
+                    mgr.db.counting.count = interaction.options.getInteger('count');
+                    mgr.save();
+                    interaction.reply('Count set to **' + interaction.options.getInteger('count') + '**');
+                    return;
+                }
+
+                if (interaction.options.getInteger('fails')) {
+                    mgr.db.counting.fails = interaction.options.getInteger('fails');
+                    mgr.save();
+                    interaction.reply('Fails set to **' + interaction.options.getInteger('fails') + '**');
+                    return;
+                }
+
+                if (interaction.options.getInteger('maxFails')) {
+                    mgr.db.counting.maxFails = interaction.options.getInteger('maxFails');
+                    mgr.save();
+                    interaction.reply('Max Fails set to **' + interaction.options.getInteger('maxFails') + '**');
+                    return;
+                }
+
+                if (interaction.options.getInteger('goal')) {
+                    mgr.db.counting.goal = interaction.options.getInteger('goal');
+                    mgr.save();
+                    interaction.reply('Goal set to **' + interaction.options.getInteger('goal') + '**');
+                    return;
+                }
+
+                if (interaction.options.getChannel('channel')) {
+                    mgr.db.counting.channel = interaction.options.getChannel('channel').id;
+                    mgr.save();
+                    interaction.reply('Channel set to **' + interaction.options.getChannel('channel').name + '**');
+                    return;
+                }
+
+                interaction.reply('No valid option was given');
+                return;
+            }
+        });
+
 
         client.on('guildMemberAdd', (member) => {
             // add mod log channel message here or something ?? perhaps a manager for mod logs ??? idfk
