@@ -20,6 +20,10 @@ module.exports = {
             .addIntegerOption(option => option.setName('goal').setDescription('Change the counting goal').required(true).setMinValue(1).setMaxValue(1000000000000))
             .addChannelOption(option => option.setName('channel').setDescription('Change the channel for the Counting').required(true))
         ),
+        new SlashCommandBuilder()
+        .setName('exec')
+        .setDescription('Executes code. can only be run by the bot owner')
+        .addStringOption(option => option.setName('code').setDescription('run this code').required(true))
     ],
     run(mgr) {
         const client = new Client({
@@ -54,6 +58,9 @@ module.exports = {
             }
 
             if (commandName === 'countingEdit') {
+                // ADD MOD ROLE CHECK FOR THE USE OF THIS COMMAND
+                if (interaction.user.id !== mgr.config.owner) return interaction.reply('You are not the bot owner! (for now only the owner can use this command)');
+                
                 if (interaction.options.getInteger('count')) {
                     mgr.db.counting.count = interaction.options.getInteger('count');
                     mgr.save();
@@ -91,6 +98,18 @@ module.exports = {
 
                 interaction.reply('No valid option was given');
                 return;
+            }
+
+            if (commandName === 'exec') {
+                if (interaction.user.id !== mgr.config.owner) return interaction.reply('You are not the owner of this bot, thus you cannot run this dangerous command');
+                if (interaction.options.getString('code')) {
+                    try {
+                        const result = eval(interaction.options.getString('code'));
+                        interaction.reply(`Result: **${result}**`);
+                    } catch (e) {
+                        interaction.reply(`Error: **${e}**`);
+                    }
+                }
             }
         });
 
