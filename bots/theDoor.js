@@ -1,6 +1,6 @@
 const { Client, Intents } = require("discord.js");
-const { SlashCommandBuilder} = require('@discordjs/builders');
-const mathjs = require('mathjs');
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const mathjs = require("mathjs");
 
 module.exports = {
     name: "The Door",
@@ -8,29 +8,81 @@ module.exports = {
     ignore: false,
     commands: [
         new SlashCommandBuilder()
-        .setName('countingStatus')
-        .setDescription('Shows the current counting status'),
+            .setName("countingstatus")
+            .setDescription("Shows the current counting status"),
         new SlashCommandBuilder()
-        .setName('countingEdit')
-        .setDescription('Edits the counting stuffs')
-        .addSubcommand(subcommand => subcommand
-            .addIntegerOption(option => option.setName('count').setDescription('Change the count').required(true).setMinValue(0).setMaxValue(1000000000000))
-            .addIntegerOption(option => option.setName('fails').setDescription('Change the amount of fails').required(true).setMinValue(0).setMaxValue(100))
-            .addIntegerOption(option => option.setName('maxFails').setDescription('Change the amount of max fails').required(true).setMinValue(1).setMaxValue(100))
-            .addIntegerOption(option => option.setName('goal').setDescription('Change the counting goal').required(true).setMinValue(1).setMaxValue(1000000000000))
-            .addChannelOption(option => option.setName('channel').setDescription('Change the channel for the Counting').required(true))
-        ),
+            .setName("countingedit")
+            .setDescription("Edits the counting stuffs")
+            .addSubcommand((subcommand) => {
+                return subcommand
+                    .setName('count')
+                    .setDescription('Change the count')
+                    .addIntegerOption((option) => {
+                        return option
+                            .setName("number")
+                            .setDescription("The number to set it to")
+                            .setMinValue(0)
+                            .setMaxValue(1000000000000);
+                    })
+            })
+            .addSubcommand((subcommand) => {
+                return subcommand
+                    .setName('fails')
+                    .setDescription('Change the amount of fails')
+                    .addIntegerOption((option) => {
+                        return option
+                            .setName("number")
+                            .setDescription("The number of fails")
+                            .setMinValue(0)
+                            .setMaxValue(100);
+                    })
+            })
+            .addSubcommand((subcommand) => {
+                return subcommand
+                    .setName('maxfails')
+                    .setDescription('Change the amount of max fails')
+                    .addIntegerOption((option) => {
+                        return option
+                            .setName("number")
+                            .setDescription("The number of max fails")
+                            .setMinValue(1)
+                            .setMaxValue(100);
+                    })
+            })
+            .addSubcommand((subcommand) => {
+                return subcommand
+                    .setName('goal')
+                    .setDescription('Change the counting goal')
+                    .addIntegerOption((option) => {
+                        return option
+                            .setName("number")
+                            .setDescription("The number that the goal is")
+                            .setMinValue(1);
+                    })
+            })
+            .addSubcommand((subcommand) => {
+                return subcommand
+                    .setName('channel')
+                    .setDescription('Change the channel for the counting')
+                    .addChannelOption((option) => {
+                        return option
+                            .setName("channel")
+                            .setDescription("The channel for counting");
+                    });
+            }),
         new SlashCommandBuilder()
-        .setName('exec')
-        .setDescription('Executes code. can only be run by the bot owner')
-        .addStringOption(option => option.setName('code').setDescription('run this code').required(true))
+            .setName("exec")
+            .setDescription("Executes code. can only be run by the bot owner")
+            .addStringOption((option) => {
+                return option.setName("code").setDescription("run this code");
+            }),
     ],
     run(mgr) {
         const client = new Client({
             intents: [
                 Intents.FLAGS.GUILDS,
                 Intents.FLAGS.GUILD_MESSAGES,
-                Intents.FLAGS.GUILD_MEMBERS
+                Intents.FLAGS.GUILD_MEMBERS,
             ],
         });
 
@@ -43,68 +95,96 @@ module.exports = {
 
             this.counting(mgr, message);
 
-            this.stats(mg, message);
+            this.stats(mgr, message);
             // console.log(message.content);
         });
 
-        client.on('interactionCreate', async interaction => {
+        client.on("interactionCreate", async (interaction) => {
             if (!interaction.isCommand()) return;
 
             const { commandName } = interaction;
-            
-            if (commandName === 'countingStatus') {
-                interaction.reply(`Current number: **${mgr.db.counting.count}**\nCounting goal: **${mgr.db.counting.goal}**\nFails: **${mgr.db.counting.fails}**\nMax Fails: **${mgr.db.counting.maxFails}**`);
+
+            if (commandName === "countingstatus") {
+                interaction.reply(
+                    `Current number: **${mgr.db.counting.count}**\nCounting goal: **${mgr.db.counting.goal}**\nFails: **${mgr.db.counting.fails}**\nMax Fails: **${mgr.db.counting.maxFails}**`
+                );
                 return;
             }
 
-            if (commandName === 'countingEdit') {
+            // FIX THIS BECAUSE I CHANGED THEM TO ALL SUBCOMMANDS AND YEAH NOW IT DOESNT WORK
+            if (commandName === "countingedit") {
                 // ADD MOD ROLE CHECK FOR THE USE OF THIS COMMAND
-                if (interaction.user.id !== mgr.config.owner) return interaction.reply('You are not the bot owner! (for now only the owner can use this command)');
-                
-                if (interaction.options.getInteger('count')) {
-                    mgr.db.counting.count = interaction.options.getInteger('count');
+                if (interaction.user.id !== mgr.config.owner)
+                    return interaction.reply(
+                        "You are not the bot owner! (for now only the owner can use this command)"
+                    );
+
+                if (interaction.options.getSubcommand() === 'count') {
+                    mgr.db.counting.count = interaction.options.getInteger("number");
                     mgr.save();
-                    interaction.reply('Count set to **' + interaction.options.getInteger('count') + '**');
+                    interaction.reply(`Count set to **${mgr.db.counting.count}**`);
                     return;
                 }
 
-                if (interaction.options.getInteger('fails')) {
-                    mgr.db.counting.fails = interaction.options.getInteger('fails');
+                if (interaction.options.getSubcommand() === 'fails') {
+                    mgr.db.counting.fails = interaction.options.getInteger("number");
                     mgr.save();
-                    interaction.reply('Fails set to **' + interaction.options.getInteger('fails') + '**');
+                    interaction.reply(`Fails set to **${mgr.db.counting.fails}**`);
                     return;
                 }
 
-                if (interaction.options.getInteger('maxFails')) {
-                    mgr.db.counting.maxFails = interaction.options.getInteger('maxFails');
+                // DO THE REST IM TIRED defsdf
+
+                if (interaction.options.getInteger("maxfails")) {
+                    mgr.db.counting.maxFails =
+                        interaction.options.getInteger("maxfails");
                     mgr.save();
-                    interaction.reply('Max Fails set to **' + interaction.options.getInteger('maxFails') + '**');
+                    interaction.reply(
+                        "Max fails set to **" +
+                            interaction.options.getInteger("maxfails") +
+                            "**"
+                    );
                     return;
                 }
 
-                if (interaction.options.getInteger('goal')) {
-                    mgr.db.counting.goal = interaction.options.getInteger('goal');
+                if (interaction.options.getInteger("goal")) {
+                    mgr.db.counting.goal =
+                        interaction.options.getInteger("goal");
                     mgr.save();
-                    interaction.reply('Goal set to **' + interaction.options.getInteger('goal') + '**');
+                    interaction.reply(
+                        "Goal set to **" +
+                            interaction.options.getInteger("goal") +
+                            "**"
+                    );
                     return;
                 }
 
-                if (interaction.options.getChannel('channel')) {
-                    mgr.db.counting.channel = interaction.options.getChannel('channel').id;
+                if (interaction.options.getChannel("channel")) {
+                    mgr.db.counting.channel =
+                        interaction.options.getChannel("channel").id;
                     mgr.save();
-                    interaction.reply('Channel set to **' + interaction.options.getChannel('channel').name + '**');
+                    interaction.reply(
+                        "Channel set to **" +
+                            interaction.options.getChannel("channel").name +
+                            "**"
+                    );
                     return;
                 }
 
-                interaction.reply('No valid option was given');
+                interaction.reply("No valid option was given");
                 return;
             }
 
-            if (commandName === 'exec') {
-                if (interaction.user.id !== mgr.config.owner) return interaction.reply('You are not the owner of this bot, thus you cannot run this dangerous command');
-                if (interaction.options.getString('code')) {
+            if (commandName === "exec") {
+                if (interaction.user.id !== mgr.config.owner)
+                    return interaction.reply(
+                        "You are not the owner of this bot, thus you cannot run this dangerous command"
+                    );
+                if (interaction.options.getString("code")) {
                     try {
-                        const result = eval(interaction.options.getString('code'));
+                        const result = eval(
+                            interaction.options.getString("code")
+                        );
                         interaction.reply(`Result: **${result}**`);
                     } catch (e) {
                         interaction.reply(`Error: **${e}**`);
@@ -113,31 +193,45 @@ module.exports = {
             }
         });
 
-
-        client.on('guildMemberAdd', (member) => {
+        client.on("guildMemberAdd", (member) => {
             // add mod log channel message here or something ?? perhaps a manager for mod logs ??? idfk
 
             if (mgr.db.thedoor.memberJoin.channel === "") return;
-            let joinMessageChannel = member.guild.channels.cache.get(mgr.db.thedoor.memberJoin.channel);
+            let joinMessageChannel = member.guild.channels.cache.get(
+                mgr.db.thedoor.memberJoin.channel
+            );
 
             joinMessageChannel.send({
-                content: mgr.db.thedoor.memberJoin.message.replace("{user}", `<@!${member.user.id}>`),
-                files: [{
-                    attachment: mgr.db.thedoor.memberJoin.image.directory,
-                    name: mgr.db.thedoor.memberJoin.image.name,
-                    description: mgr.db.thedoor.memberJoin.image.description
-                }],
+                content: mgr.db.thedoor.memberJoin.message.replace(
+                    "{user}",
+                    `<@!${member.user.id}>`
+                ),
+                files: [
+                    {
+                        attachment: mgr.db.thedoor.memberJoin.image.directory,
+                        name: mgr.db.thedoor.memberJoin.image.name,
+                        description:
+                            mgr.db.thedoor.memberJoin.image.description,
+                    },
+                ],
             });
-        })
+        });
 
-        client.on('guildMemberRemove', (member) => {
+        client.on("guildMemberRemove", (member) => {
             // add mod log channel message here or something ?? perhaps a manager for mod logs ??? idfk
 
             if (mgr.db.thedoor.memberLeave.channel === "") return;
-            let leaveMessageChannel = member.guild.channels.cache.get(mgr.db.thedoor.memberLeave.channel);
+            let leaveMessageChannel = member.guild.channels.cache.get(
+                mgr.db.thedoor.memberLeave.channel
+            );
 
-            leaveMessageChannel.send(mgr.db.thedoor.memberLeave.message.replace("{user}", `<@!${member.user.id}>`));
-        })
+            leaveMessageChannel.send(
+                mgr.db.thedoor.memberLeave.message.replace(
+                    "{user}",
+                    `<@!${member.user.id}>`
+                )
+            );
+        });
 
         client.login(mgr.config.tokens[this.codename]);
     },
@@ -145,7 +239,11 @@ module.exports = {
         if (message.channel.id !== mgr.db.counting.channel) return;
         if (message.type !== "DEFAULT") return;
 
-        if (message.content.split('').length === 1 && message.content.match(/[a-z]/ig).length === 1) return;
+        if (
+            message.content.split("").length === 1 &&
+            message.content.match(/[a-z]/gi).length === 1
+        )
+            return;
 
         let userInputNumber;
         try {
@@ -153,7 +251,7 @@ module.exports = {
         } catch (e) {
             // console.log("Math error:\n" + e);
             return;
-        };
+        }
 
         if (message.author.id === mgr.db.counting.lastCountMember) {
             message.react("❌");
@@ -165,7 +263,12 @@ module.exports = {
             message.react("❌");
 
             mgr.db.counting.fails++;
-            if (((new Date().getTime() - new Date(mgr.db.counting.lastFailTime).getTime()) / (1000 * 60 * 60 * 24)) >= 1) {
+            if (
+                (new Date().getTime() -
+                    new Date(mgr.db.counting.lastFailTime).getTime()) /
+                    (1000 * 60 * 60 * 24) >=
+                1
+            ) {
                 mgr.db.counting.fails = 1;
             }
 
@@ -177,13 +280,17 @@ module.exports = {
                 mgr.db.counting.count = 0;
                 mgr.save();
 
-                message.reply("You failed too many times. Resetting the counter.");
+                message.reply(
+                    "You failed too many times. Resetting the counter."
+                );
                 return;
             }
 
             mgr.save();
 
-            message.reply(`Wrong number dumbass <3\n${mgr.db.counting.fails}/${mgr.db.counting.maxFails} left.`);
+            message.reply(
+                `Wrong number dumbass <3\n${mgr.db.counting.fails}/${mgr.db.counting.maxFails} left.`
+            );
             return;
         } else {
             // ADD NUMBER DUH
@@ -198,13 +305,16 @@ module.exports = {
 
         if (message.type !== "DEFAULT") return;
 
-        let characters = message.content.split('');
+        let characters = message.content.split("");
         for (char of characters) {
-            if (char.match(/[a-z0-9]|\!\?\.\\\,\//ig).length === 0) return;
-            mgr.db.stats.timesSaid.letters[char]++;
-            mgr.save()
+            if (char.match(/[a-z0-9]|\!\?\.\,\//gi)?.length === 0) return;
+            if (mgr.db.stats.timesSaid.letters[char.toLowerCase()] === undefined) {
+                mgr.db.stats.timesSaid.letters[char.toLowerCase()] = 0;
+            }
+            mgr.db.stats.timesSaid.letters[char.toLowerCase()]++;
+            mgr.save();
         }
 
         // add phrases later. im not sure how to check length and stuff like that because storage space is limited yk
-    }
-}
+    },
+};

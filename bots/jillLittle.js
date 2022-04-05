@@ -1,5 +1,5 @@
 const { Client, Intents } = require("discord.js");
-const { SlashCommandBuilder} = require('@discordjs/builders');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
     name: "Jill's Little Friend",

@@ -18,10 +18,23 @@ for (const file of commandFiles) {
 
     const rest = new REST({ version: "9" }).setToken(fileManager.config.tokens[command.codename]);
 
+    /*
+    rest.get(Routes.applicationGuildCommands(clientId, guildId))
+        .then(data => {
+            const promises = [];
+            for (const cmd of data) {
+                const deleteUrl = `${Routes.applicationGuildCommands(clientId, guildId)}/${cmd.id}`;
+                promises.push(rest.delete(deleteUrl));
+            }
+            return Promise.all(promises);
+        });
+    */
+
+        
     (async () => {
         try {
-            console.log("Started refreshing application (/) commands.");
-
+            console.log("Started refreshing application (/) commands. Command: " + command.name);
+            console.log(command.commands.map(cmd => cmd.toJSON()))
             await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
                 body: command.commands.map(cmd => cmd.toJSON()),
             });
