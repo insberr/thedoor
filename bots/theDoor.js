@@ -38,6 +38,8 @@ module.exports = {
             if (message.author.bot) return;
 
             this.counting(mgr, message);
+
+            this.stats(mg, message);
             // console.log(message.content);
         });
 
@@ -171,5 +173,19 @@ module.exports = {
             mgr.save();
             message.react("✅");
         }
+    },
+    stats(mgr, message) {
+        // add ignored channels???????
+
+        if (message.type !== "DEFAULT") return;
+
+        let characters = message.content.split('');
+        for (char of characters) {
+            if (char.match(/[a-z0-9]|\!\?\.\\\,\//ig).length === 0) return;
+            mgr.db.stats.timesSaid.letters[char]++;
+            mgr.save()
+        }
+
+        // add phrases later. im not sure how to check length and stuff like that because storage space is limited yk
     }
 }
