@@ -109,6 +109,15 @@ module.exports = {
             });
         })
 
+        client.on('guildMemberRemove', (member) => {
+            // add mod log channel message here or something ?? perhaps a manager for mod logs ??? idfk
+
+            if (mgr.db.thedoor.memberLeave.channel === "") return;
+            let leaveMessageChannel = member.guild.channels.cache.get(mgr.db.thedoor.memberLeave.channel);
+
+            leaveMessageChannel.send(mgr.db.thedoor.memberLeave.message.replace("{user}", `<@!${member.user.id}>`));
+        })
+
         client.login(mgr.config.tokens[this.codename]);
     },
     counting(mgr, message) {
