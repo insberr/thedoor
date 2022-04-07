@@ -105,13 +105,22 @@ module.exports = {
             const { commandName } = interaction;
 
             if (commandName === "countingstatus") {
+                if (
+                    (new Date().getTime() -
+                        new Date(mgr.db.counting.lastFailTime).getTime()) /
+                        (1000 * 60 * 60 * 24) >=
+                    1
+                ) {
+                    mgr.db.counting.fails = 0;
+                    mgr.save();
+                }
+
                 interaction.reply(
                     `Current number: **${mgr.db.counting.count}**\nCounting goal: **${mgr.db.counting.goal}**\nFails: **${mgr.db.counting.fails}**\nMax Fails: **${mgr.db.counting.maxFails}**`
                 );
                 return;
             }
 
-            // FIX THIS BECAUSE I CHANGED THEM TO ALL SUBCOMMANDS AND YEAH NOW IT DOESNT WORK
             if (commandName === "countingedit") {
                 // ADD MOD ROLE CHECK FOR THE USE OF THIS COMMAND
                 if (interaction.user.id !== mgr.config.owner)
@@ -133,41 +142,24 @@ module.exports = {
                     return;
                 }
 
-                // DO THE REST IM TIRED defsdf
-
-                if (interaction.options.getInteger("maxfails")) {
-                    mgr.db.counting.maxFails =
-                        interaction.options.getInteger("maxfails");
+                if (interaction.options.getSubcommand() === 'maxFails') {
+                    mgr.db.counting.maxFails = interaction.options.getInteger("number");
                     mgr.save();
-                    interaction.reply(
-                        "Max fails set to **" +
-                            interaction.options.getInteger("maxfails") +
-                            "**"
-                    );
+                    interaction.reply(`Max fails set to **${interaction.options.getInteger("number")}**`);
                     return;
                 }
 
-                if (interaction.options.getInteger("goal")) {
-                    mgr.db.counting.goal =
-                        interaction.options.getInteger("goal");
+                if (interaction.options.getSubcommand() === 'goal') {
+                    mgr.db.counting.goal = interaction.options.getInteger("number");
                     mgr.save();
-                    interaction.reply(
-                        "Goal set to **" +
-                            interaction.options.getInteger("goal") +
-                            "**"
-                    );
+                    interaction.reply(`Goal set to **${interaction.options.getInteger("goal")}**`);
                     return;
                 }
 
-                if (interaction.options.getChannel("channel")) {
-                    mgr.db.counting.channel =
-                        interaction.options.getChannel("channel").id;
+                if (interaction.options.getSubcommand() === 'channel') {
+                    mgr.db.counting.channel = interaction.options.getChannel("channel").id;
                     mgr.save();
-                    interaction.reply(
-                        "Channel set to **" +
-                            interaction.options.getChannel("channel").name +
-                            "**"
-                    );
+                    interaction.reply(`Channel set to **${interaction.options.getChannel("channel").name}**`);
                     return;
                 }
 
@@ -289,13 +281,19 @@ module.exports = {
             mgr.save();
 
             message.reply(
-                `Wrong number dumbass <3\n${mgr.db.counting.fails}/${mgr.db.counting.maxFails} left.`
+                `Wrong number dumbass <3\n${mgr.db.counting.fails}/${mgr.db.counting.maxFails} used.`
             );
             return;
         } else {
             // ADD NUMBER DUH
             mgr.db.counting.count++;
             mgr.db.counting.lastCountMember = message.author.id;
+
+            if (mgr.db.counting.highestNumber === undefined) mgr.db.counting.highestNumber = 0;
+            if (mgr.db.counting.count > mgr.db.counting.highestNumber) {
+                mgr.db.counting.highestNumber = mgr.db.counting.count;
+            }
+
             mgr.save();
             message.react("✅");
         }
