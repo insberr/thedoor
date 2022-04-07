@@ -10,11 +10,12 @@ um. do slash commands soon
     - use ksoft or whatever
 - better count to a million
     - make him say wrong number dumbass <3 again
+    - implement a special reaction for messages that contain “69” also in counting 💯 for every 100, a special reaction for 420, 42069, 69420 ..
 - self roles ??
 - starboard
 - quotes
-- translate messages (maybe ???)
-- Memeber join and leave messages (and jj gif on member join)
+-[ ] translate messages (maybe ???)
+-[x] Memeber join and leave messages (and jj gif on member join)
 
 ### Little friends
 Make theses adjust chance based on how active the chat is ???  
