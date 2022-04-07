@@ -116,7 +116,7 @@ module.exports = {
                 }
 
                 interaction.reply(
-                    `Current number: **${mgr.db.counting.count}**\nCounting goal: **${mgr.db.counting.goal}**\nFails: **${mgr.db.counting.fails}**\nMax Fails: **${mgr.db.counting.maxFails}**`
+                    `Current number: **${mgr.db.counting.count}**\nCounting goal: **${mgr.db.counting.goal}**\nHighest number: ${mgr.db.counting.highestNumber}\nFails: **${mgr.db.counting.fails}**\nMax Fails: **${mgr.db.counting.maxFails}**`
                 );
                 return;
             }
