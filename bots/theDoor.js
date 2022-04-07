@@ -305,6 +305,8 @@ module.exports = {
 
         if (message.type !== "DEFAULT") return;
 
+        // let text = message.content.replace(/<(@&?|#)[0-9]+>/g, "");
+
         let characters = message.content.split("");
         for (char of characters) {
             if (char.match(/[a-z0-9]|\!\?\.\,\//gi)?.length === 0) return;
