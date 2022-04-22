@@ -38,12 +38,12 @@ module.exports = {
             }
 
             if (message.content.match(/ +L$| +L +|^ *L+ *$/gim)?.length > 0) {
-                message.react(":regional_indicator_l:");
+                message.react("🇱");
                 return;
             }
 
             if (message.content.match(/ +W$| +W +|^ *W+ *$/gim)?.length > 0) {
-                message.react(":regional_indicator_w:");
+                message.react("🇼");
                 return;
             }
 
