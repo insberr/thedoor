@@ -4,7 +4,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
     name: "Carbon The Cat",
     codename: "carbon",
-    ignore: true,
+    ignore: false,
     run(mgr) {
         const client = new Client({
             intents: [
