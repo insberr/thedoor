@@ -8,8 +8,9 @@ module.exports = {
         this.db = JSON.parse(fs.readFileSync("database.json"));
         return;
     },
-    init(codename, features) {
-        // code ill write later
+    init(codename) {
+        if (this.db.chance[codename] === undefined) this.db.chance[codename] = 0.1;
+        if (this.db.stats.randomReplies[codename] === undefined) this.db.stats.randomReplies[codename] = 0;
     },
 };
 

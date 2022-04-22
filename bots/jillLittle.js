@@ -4,7 +4,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
     name: "Jill's Little Friend",
     codename: "jillLittle",
-    ignore: false,
+    ignore: true,
     commands: [
         // TODO Add permissions so random users dont mess with the config lol **************************** plss
         new SlashCommandBuilder()
