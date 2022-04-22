@@ -41,9 +41,20 @@ module.exports = {
                 return;
             }
 
+            if (message.content.match(/ +W$| +W +|^ *W+ *$/gim)?.length > 0) {
+                message.react("W");
+                return;
+            }
+
             let number = Math.random();
             if (number < mgr.db.chance[this.codename] / 100) {
                 message.reply("L");
+                return;
+            }
+
+            number = Math.random();
+            if (number < mgr.db.chance[this.codename] / 100) {
+                message.reply("W");
                 return;
             }
         });
