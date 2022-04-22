@@ -21,6 +21,7 @@ module.exports = {
 
         client.once("ready", () => {
             console.log(this.name + " Ready!");
+            mgr.init(this.codename);
         });
 
         client.addListener("messageCreate", (message) => {
