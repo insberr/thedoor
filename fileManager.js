@@ -8,6 +8,9 @@ module.exports = {
         this.db = JSON.parse(fs.readFileSync("database.json"));
         return;
     },
+    init(codename, features) {
+        // code ill write later
+    },
 };
 
 // implement later; config file manager and database kinda thing
