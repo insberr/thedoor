@@ -5,7 +5,7 @@
     "@discordjs/rest": "^0.3.0",
     "@discordjs/voice": "^0.8.0",
     "cld": "^2.7.1",
-    "discord-api-types": "^0.28.0",
+    "discord-api-types": "^0.37.16",
     "discord.js": "^13.6.0",
     "ffmpeg-static": "^4.4.1",
     "languagedetect": "^2.0.0",
