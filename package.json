@@ -4,7 +4,7 @@
     "@discordjs/opus": "^0.5.3",
     "@discordjs/rest": "^0.3.0",
     "@discordjs/voice": "^0.13.0",
-    "cld": "^2.7.1",
+    "cld": "^2.8.4",
     "discord-api-types": "^0.28.0",
     "discord.js": "^13.6.0",
     "ffmpeg-static": "^4.4.1",
