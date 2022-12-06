@@ -1,9 +1,9 @@
-const { Client, Intents } = require("discord.js");
+const { Client, GatewayIntentBits } = require("discord.js");
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
-    name: "Jill's Little Friend",
-    codename: "jillLittle",
+    name: "x-outdated",
+    codename: "exmemberone",
     ignore: true,
     commands: [
         // TODO Add permissions so random users dont mess with the config lol **************************** plss
@@ -16,7 +16,7 @@ module.exports = {
     ],
     run(mgr) {
         const client = new Client({
-            intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+            intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
         });
 
         client.once("ready", () => {

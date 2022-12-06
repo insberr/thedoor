@@ -1,0 +1,18 @@
+[Unit]
+Description=Runs Discord bots for Joeys server
+
+[Service]
+ExecStart=/home/pi/thedoor/index.js
+
+Restart=always
+User=pi
+
+Group=nogroup
+
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+
+WorkingDirectory=/home/pi/thedoor
+
+[Install]
+WantedBy=multi-user.target

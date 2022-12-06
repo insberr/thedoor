@@ -1,4 +1,4 @@
-const { Client, Intents } = require("discord.js");
+const { Client, GatewayIntentBits } = require("discord.js");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const mathjs = require("mathjs");
 
@@ -80,9 +80,8 @@ module.exports = {
     run(mgr) {
         const client = new Client({
             intents: [
-                Intents.FLAGS.GUILDS,
-                Intents.FLAGS.GUILD_MESSAGES,
-                Intents.FLAGS.GUILD_MEMBERS,
+                GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages,
+                GatewayIntentBits.GuildMembers,
             ],
         });
 

@@ -35,9 +35,13 @@ for (const file of commandFiles) {
         try {
             console.log("Started refreshing application (/) commands. Command: " + command.name);
             console.log(command.commands.map(cmd => cmd.toJSON()))
-            await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
-                body: command.commands.map(cmd => cmd.toJSON()),
-            });
+            // await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
+            //     body: command.commands.map(cmd => cmd.toJSON()),
+            // });
+            await rest.put(
+                Routes.applicationCommands(clientId),
+                { body: command.commands.map(cmd => cmd.toJSON()), },
+            );
 
             console.log("Successfully reloaded application (/) commands.");
         } catch (error) {
