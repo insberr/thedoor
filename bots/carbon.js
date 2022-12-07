@@ -9,7 +9,7 @@ module.exports = {
         const client = new Client({
             intents: [
                 GatewayIntentBits.Guilds,
-                GatewayIntentBits.GuildMessages
+                GatewayIntentBits.GuildMessages,
             ],
         });
 

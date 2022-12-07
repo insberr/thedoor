@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits } = require("discord.js");
+const { Client, GatewayIntentBits, MessageType, Partials } = require("discord.js");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const mathjs = require("mathjs");
 
@@ -35,6 +35,18 @@ module.exports = {
                             .setDescription("The number of fails")
                             .setMinValue(0)
                             .setMaxValue(100);
+                    })
+            })
+            .addSubcommand((subcommand) => {
+                return subcommand
+                    .setName('cooldown')
+                    .setDescription('Change the cooldown when a single user is doing multiple numbers in a row')
+                    .addIntegerOption((option) => {
+                        return option
+                            .setName("number")
+                            .setDescription("The number of seconds for the cooldown")
+                            .setMinValue(0)
+                            .setMaxValue(1000);
                     })
             })
             .addSubcommand((subcommand) => {
@@ -80,8 +92,14 @@ module.exports = {
     run(mgr) {
         const client = new Client({
             intents: [
-                GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages,
+                GatewayIntentBits.Guilds,
+                GatewayIntentBits.GuildMessages,
                 GatewayIntentBits.GuildMembers,
+                GatewayIntentBits.MessageContent,
+                GatewayIntentBits.GuildMessageReactions,
+            ],
+            partials: [
+                Partials.Channel, Partials.Message, Partials.Reaction,
             ],
         });
 
@@ -97,6 +115,13 @@ module.exports = {
 
             this.stats(mgr, message);
             // console.log(message.content);
+        });
+
+        client.addListener("messageDelete", (message) => {
+            if (mgr.db.counting.channel !== message.channel.id) return;
+            if (!message.reactions.cache.has('✅')) return;
+
+            message.channel.send("A message has been deleted in this channel, the count is **" + mgr.db.counting.count + "**")
         });
 
         client.on("interactionCreate", async (interaction) => {
@@ -139,6 +164,13 @@ module.exports = {
                     mgr.db.counting.fails = interaction.options.getInteger("number");
                     mgr.save();
                     interaction.reply(`Fails set to **${mgr.db.counting.fails}**`);
+                    return;
+                }
+
+                if (interaction.options.getSubcommand() === 'cooldown') {
+                    mgr.db.counting.userCooldownSeconds = interaction.options.getInteger("number");
+                    mgr.save();
+                    interaction.reply(`Cooldown seconds set to **${mgr.db.counting.userCooldownSeconds}**`);
                     return;
                 }
 
@@ -229,13 +261,15 @@ module.exports = {
     },
     counting(mgr, message) {
         if (message.channel.id !== mgr.db.counting.channel) return;
-        if (message.type !== "DEFAULT") return;
+        if (message.type !== MessageType.Default) return;
 
-        if (
-            message.content.split("").length === 1 &&
-            message.content.match(/[a-z]/gi).length === 1
-        )
-            return;
+        if (message.content === '') {
+            console.log('What the hell, how?');
+            message.reply('You sent an ampty message somehow...');
+        }
+
+        let matched = message.content.match(/[0-9+-\/\*\(\)\^\.]/gi)
+        if (matched === null) return;
 
         let userInputNumber;
         try {
@@ -246,9 +280,13 @@ module.exports = {
         }
 
         if (message.author.id === mgr.db.counting.lastCountMember) {
-            message.react("❌");
-            message.reply("Not your turn dumbass <3");
-            return;
+            let secondsSinceLastCount = (new Date().getTime() - new Date(mgr.db.counting.lastCountTime).getTime()) / 1000;
+            let secondsLeft = mgr.db.counting.userCooldownSeconds - secondsSinceLastCount;
+            if (secondsLeft > 0) {
+                message.react("❌");
+                message.reply("Not your turn dumbass <3\nYou can count again in **" + secondsLeft + "** seconds..");
+                return;
+            }
         }
 
         if (userInputNumber !== mgr.db.counting.count + 1) {
@@ -288,6 +326,7 @@ module.exports = {
             // ADD NUMBER DUH
             mgr.db.counting.count++;
             mgr.db.counting.lastCountMember = message.author.id;
+            mgr.db.counting.lastCountTime = new Date();
 
             if (mgr.db.counting.highestNumber === undefined) mgr.db.counting.highestNumber = 0;
             if (mgr.db.counting.count > mgr.db.counting.highestNumber) {
@@ -301,7 +340,7 @@ module.exports = {
     stats(mgr, message) {
         // add ignored channels???????
 
-        if (message.type !== "DEFAULT") return;
+        if (message.type !== MessageType.Default) return;
 
         // let text = message.content.replace(/<(@&?|#)[0-9]+>/g, "");
 
