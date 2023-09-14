@@ -3,7 +3,7 @@
     "@discordjs/builders": "^1.6.5",
     "@discordjs/rest": "^2.0.1",
     "cld": "^2.9.0",
-    "discord-api-types": "^0.37.54",
+    "discord-api-types": "^0.37.55",
     "discord.js": "^14.13.0",
     "ffmpeg-static": "^5.2.0",
     "languagedetect": "^2.0.0",
